@@ -1,6 +1,6 @@
 [project]
 name = "byop"
-version = "0.3.0"
+version = "0.4.0"
 description = "byop/v1: bring-your-own-polygons measure contract — validator, pinning, registry (ward-wise-measures)"
 readme = "README.md"
 license = {text = "MIT"}

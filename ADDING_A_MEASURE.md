@@ -12,7 +12,9 @@ the finest layer you're comfortable publishing (a documented sample is fine for 
 ## 2. Write `aggregation_spec.json`
 
 Follow [`CONTRACT.md`](CONTRACT.md). Every metric needs a `label`, a one-sentence `description`, a
-`methodology`, a `unit` and a `direction`. Put the spec next to the layer files, e.g.
+`methodology`, a `unit` and a `direction`. If residents reasonably disagree about which way is better
+(more plate readers: safer or more watched?), keep a default `direction` and add
+`"direction_contested": true` so each reader can flip it. Put the spec next to the layer files, e.g.
 `data/layers/`.
 
 ## 3. Validate locally

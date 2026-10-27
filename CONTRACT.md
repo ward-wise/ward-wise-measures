@@ -84,6 +84,7 @@ one it has polygons for.
 | `combine` | yes | one of the rules below |
 | `unit` | yes | `percent`, `count`, `rate`, `currency`, `index_0_100`, `minutes`, `miles`, … (Penlight's units; free text is accepted but won't format) |
 | `direction` | yes | `higher` or `lower` = which way is better for a resident (`higher_better` / `lower_better` accepted) |
+| `direction_contested` | no | `true` when residents reasonably disagree about which way is better; `direction` stays the default reading and each reader may flip it, see [Contested direction](#contested-direction-v14-optional) |
 | `label` | yes | 1–3 words, the chip on the map |
 | `description` | yes | one sentence a resident understands |
 | `methodology` | yes | how it was computed, 1–3 sentences, with the data source |
@@ -163,6 +164,35 @@ A consumer's own curated glyph or tags for a metric take priority; the spec's ar
 merges `keywords` and `extra_categories` with its hand-kept lists and uses `icon_svg` only when it has no
 hand-drawn glyph, falling back to the metric's domain glyph when the spec has none either.
 
+## Contested direction (v1.4, optional)
+
+Most measures have a direction residents agree on: fewer crashes is better. Some don't. More
+license-plate readers is less privacy to one reader and more public safety to the next; more bars is
+nightlife to one and nuisance to another. For a measure like that, the source still picks a `direction`,
+and says the choice is open:
+
+```json
+"alpr_per_sqkm": {
+  "…": "…",
+  "direction": "lower",
+  "direction_contested": true,
+  "default_weight": 0,
+  "methodology": "… Fewer readers is scored as better by default, a privacy reading; others count the same cameras as a public-safety investment."
+}
+```
+
+- **`direction_contested`** (metric, boolean): `true` means the consumer should let each reader choose
+  which way counts as better for this metric. `direction` is still required (even with `--lenient`): it is
+  the default every reader starts from and the reading an older consumer uses. `false` is the same as
+  leaving the field out.
+- A consumer that offers the choice scores the flipped metric as if its `direction` were the other one.
+  For min-max scoring that is `score → 100 − score`; nothing else about the metric changes.
+- Say in `methodology` which reading the default takes and what the other one is, and leave
+  `default_weight` at 0 so no reading enters anyone's index unasked (both recommended, not enforced).
+
+Penlight shows a "fewer is better / more is better" switch on contested metrics and carries each
+reader's choice in the page URL, so a shared link scores the same way.
+
 ## Publishing
 
 Attach the layers dir's files, flat, to a GitHub Release of the source repo, tagged
@@ -180,7 +210,10 @@ becomes `byop/v2` and consumers announce support before sources need it.
 |---|---|
 | v1.1 (validator 0.2.0) | `sum` combine; metric `time_field`, `years`, `time_invariant`, `valid_from`; layer `as_of` |
 | v1.2 (validator 0.3.0) | metric `keywords`, `extra_categories`, `icon_svg` (presentation); `social_connectedness`, `lifelong_learning`, `religion_spiritual` accepted as categories |
+| v1.3 (validator 0.3.0) | layer `geography` on `polygon_values` layers |
+| v1.4 (validator 0.4.0) | metric `direction_contested` |
 
-A source that uses a v1.1 or v1.2 field still says `"contract": "byop/v1"`. Before a source relies on one,
+A source that uses a v1.1, v1.2, v1.3 or v1.4 field still says `"contract": "byop/v1"`. Before a source relies on one,
 the consumer must support it (Penlight does once its pipeline reads `time_field`) — an older consumer
-rejects `sum` and ignores the time and presentation fields (its schema check passes them through as unknown keys).
+rejects `sum` and ignores the time, presentation and contested-direction fields (its schema check passes them through
+as unknown keys), so a contested metric simply scores in its default `direction` there.
