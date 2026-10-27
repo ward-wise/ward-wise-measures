@@ -54,10 +54,27 @@ Any other top-level keys are kept as provenance and ignored by consumers.
 |---|---|---|---|
 | `points` | GeoJSON FeatureCollection of Point features with `properties` | its own | `count`, `ratio`, `share`, `sum` |
 | `raster` | GeoTIFF, any projected CRS, NaN = no data | its own | `mean` |
-| `polygon_values` | CSV with an `id_field` column naming a standard census polygon (tract GEOID, ZCTA) and one column per value/weight | the consumer supplies standard census geometries | `weighted_mean` |
+| `polygon_values` | CSV with an `id_field` column naming a standard polygon (tract GEOID, ZCTA, ward, community area) and one column per value/weight | the consumer supplies the geometries | `weighted_mean` |
 
 Each layer: `file` (relative to the spec), `kind`, optional `value` (a human sentence describing one
-cell/point/row), for `polygon_values` the `id_field`, and optional `as_of` (see [Time](#time-v11-optional)).
+cell/point/row), for `polygon_values` the `id_field` and a recommended `geography`, and optional
+`as_of` (see [Time](#time-v11-optional)).
+
+**`geography`** (`polygon_values` only, v1.3) says which polygons the ids name, so a consumer can
+supply them without being told per source:
+
+| `geography` | `id_field` values |
+|---|---|
+| `census_tract_2020` | 11-digit 2020 tract GEOID (`17031010100`) |
+| `zcta_2020` | 5-digit 2020 ZCTA |
+| `chicago_ward_2023` | two-digit ward on the 2023 map (`01` … `50`) |
+| `chicago_community_area` | two-digit community area (`01` … `77`) |
+
+A Chicago ward or community-area layer is used only for that same geography (a ward table never
+stands in for a neighborhood); census layers serve any target by overlap. To publish one measure
+exactly at the city's own boundaries and by overlap everywhere else, list the layers finest-first
+in the metric — `"layer": ["wards", "community_areas", "tracts"]` — and the consumer takes the first
+one it has polygons for.
 
 ### Metrics
 

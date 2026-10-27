@@ -17,6 +17,9 @@ from .presentation import extra_categories_problems, icon_svg_problems, keywords
 
 SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schema" / "aggregation_spec.schema.json"
 
+# polygon_values geographies a consumer can supply polygons for (CONTRACT.md, "geography").
+GEOGRAPHIES = {"census_tract_2020", "zcta_2020", "chicago_ward_2023", "chicago_community_area"}
+
 RULE_FIELDS = {
     "count": {"required": (), "kinds": ("points",)},
     "ratio": {"required": ("numerator", "denominator"), "kinds": ("points",)},
@@ -98,6 +101,9 @@ def validate_spec(spec: dict[str, Any], *, strict_catalog: bool = True) -> list[
                 problems.append(f"{metric_id}: combine {metric['combine']!r} needs a {'/'.join(rule['kinds'])} layer, {name!r} is {layer.get('kind')!r}")
             if layer.get("kind") == "polygon_values" and not layer.get("id_field"):
                 problems.append(f"layer {name!r}: polygon_values layers need an id_field")
+            if layer.get("geography") is not None and (layer.get("kind") != "polygon_values"
+                                                       or layer["geography"] not in GEOGRAPHIES):
+                problems.append(f"layer {name!r}: geography must be one of {sorted(GEOGRAPHIES)} on a polygon_values layer")
         for field in rule["required"]:
             if not metric.get(field):
                 problems.append(f"{metric_id}: combine {metric['combine']!r} needs {field!r}")
