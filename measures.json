@@ -64,6 +64,25 @@
       "notes": "Movie-theater reach, the worked point-of-interest example: 66 operating cinemas in Chicago and a 15-mile ring (Google Maps sweep 2026-10-22; status and screen counts checked by a model with web search, verified by a stronger model, disagreements settled by hand) plus 2020 Census block populations. Five population-weighted reach metrics via ratio (nearest, 5th-nearest and nearest independent cinema; screens within 3 mi; screens per 100k by two-step floating catchment) and in-area cinema and screen counts (sum: byop/v1.1 source)."
     },
     {
+      "name": "panopticounts",
+      "repo": "HarryBrisson/panopticounts",
+      "tag": "v2026.10.27",
+      "assets": {
+        "aggregation_spec.json": "sha256:67190f65f7d21a47afd8fe21eedfc460876fe7c23d3d28bf0d53901a04df3718",
+        "community_areas.csv": "sha256:ebd8e83bdfd6516e446b1171bb801441163b5013bc72645a786d1f6e8c867390",
+        "tracts.csv": "sha256:0bf2e446efeaa660a132260c5525b2e54c91db0ffba9a66f522af8e0d2d39318",
+        "wards.csv": "sha256:bedf12ea955ebf66af8f9fd1bcce6c8fcb7e974a33224464cb3b1480b305f927"
+      },
+      "targets": [
+        "ward",
+        "community_area",
+        "chi"
+      ],
+      "allocation_method": "native_source_byop",
+      "confidence": "medium",
+      "notes": "License-plate readers, aggregates only: every vendor's ALPRs mapped in OpenStreetMap (2026-10-27) merged with Flock Safety's in-service plate readers from the Dec 2025 inventory behind Proton's Flock camera map (not redistributed). Wards and community areas computed directly, tracts for the χGRID (byop v1.3 layer geography). Five metrics, all weight 0. Confidence medium: OSM had mapped only 65% of Flock's in-service readers (57% south of Madison), so non-Flock readers are undercounted."
+    },
+    {
       "name": "parkability",
       "repo": "HarryBrisson/parkability",
       "layers_subdir": "data/layers",
