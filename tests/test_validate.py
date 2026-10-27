@@ -211,3 +211,13 @@ def test_keywords_and_extra_categories_are_checked():
     assert any("already the metric's category" in p for p in problems)
     assert any("repeats" in p or "non-unique" in p for p in problems)
     assert any("cap is 4" in p or "too long" in p for p in validate_spec(_with(extra_categories=["health", "education", "safety", "time_balance", "good_governance"])))
+
+
+def test_polygon_values_geography_is_checked():
+    layers = {"wards": {"file": "wards.csv", "kind": "polygon_values", "id_field": "ward_id", "geography": "chicago_ward_2023"},
+              "tracts": {"file": "tracts.csv", "kind": "polygon_values", "id_field": "geoid", "geography": "census_tract_2020"}}
+    metric = {"layer": ["wards", "tracts"], "combine": "weighted_mean", "value": "v", "weight": "w", "unit": "rate",
+              "direction": "lower", "label": "Demo", "description": "A demo.", "methodology": "Counted."}
+    assert validate_spec(_spec(layers=layers, metrics={"demo_density": metric})) == []
+    layers["tracts"]["geography"] = "census_tracts"
+    assert any("geography must be one of" in p for p in validate_spec(_spec(layers=layers, metrics={"demo_density": metric})))
