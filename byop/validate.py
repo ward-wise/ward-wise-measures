@@ -118,6 +118,12 @@ def validate_spec(spec: dict[str, Any], *, strict_catalog: bool = True) -> list[
             if not (isinstance(years, list) and len(years) == 2 and all(isinstance(y, int) for y in years)
                     and years[0] <= years[1]):
                 problems.append(f"{metric_id}: years must be [start, end] with start <= end")
+        # v1.4 contested direction: `direction` is the default a reader can flip, so it's needed even when lenient
+        if "direction_contested" in metric:
+            if not isinstance(metric["direction_contested"], bool):
+                problems.append(f"{metric_id}: direction_contested must be true or false, got {metric['direction_contested']!r}")
+            elif metric["direction_contested"] and not metric.get("direction"):
+                problems.append(f"{metric_id}: direction_contested needs a direction (the default reading a reader can flip)")
         # v1.2 presentation extras: checked even when lenient, because a consumer renders them
         if "keywords" in metric:
             problems.extend(f"{metric_id}: {p}" for p in keywords_problems(metric["keywords"]))

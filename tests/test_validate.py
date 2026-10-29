@@ -221,3 +221,22 @@ def test_polygon_values_geography_is_checked():
     assert validate_spec(_spec(layers=layers, metrics={"demo_density": metric})) == []
     layers["tracts"]["geography"] = "census_tracts"
     assert any("geography must be one of" in p for p in validate_spec(_spec(layers=layers, metrics={"demo_density": metric})))
+
+
+# --- v1.4 contested direction --------------------------------------------------------------------
+
+def test_direction_contested_is_optional_and_boolean():
+    assert validate_spec(_with(direction_contested=True)) == []
+    assert validate_spec(_with(direction_contested=False)) == []
+    problems = validate_spec(_with(direction_contested="yes"))
+    assert any(p.startswith("demo_share_pct:") and "direction_contested must be true or false" in p for p in problems)
+
+
+def test_direction_contested_needs_a_default_direction_even_when_lenient():
+    spec = _with(direction_contested=True)
+    del spec["metrics"]["demo_share_pct"]["direction"]
+    problems = validate_spec(spec, strict_catalog=False)
+    assert any("direction_contested needs a direction" in p for p in problems)
+    # an uncontested metric may still omit direction under --lenient
+    spec["metrics"]["demo_share_pct"]["direction_contested"] = False
+    assert validate_spec(spec, strict_catalog=False) == []

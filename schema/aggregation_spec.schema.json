@@ -29,11 +29,14 @@
       "propertyNames": {"pattern": "^[a-z][a-z0-9_]{2,80}$"},
       "additionalProperties": {
         "type": "object", "required": ["layer", "combine", "unit"],
+        "if": {"properties": {"direction_contested": {"const": true}}, "required": ["direction_contested"]},
+        "then": {"required": ["direction"]},
         "properties": {
           "layer": {"oneOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}, "minItems": 1}]},
           "combine": {"enum": ["count", "ratio", "share", "sum", "mean", "weighted_mean"]},
           "unit": {"type": "string"},
           "direction": {"enum": ["higher", "lower", "higher_better", "lower_better"]},
+          "direction_contested": {"type": "boolean"},
           "label": {"type": "string", "maxLength": 60},
           "description": {"type": "string", "maxLength": 300},
           "methodology": {"type": "string", "maxLength": 1200},
