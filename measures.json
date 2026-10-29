@@ -66,9 +66,9 @@
     {
       "name": "panopticounts",
       "repo": "HarryBrisson/panopticounts",
-      "tag": "v2026.10.27",
+      "tag": "v2026.10.28",
       "assets": {
-        "aggregation_spec.json": "sha256:67190f65f7d21a47afd8fe21eedfc460876fe7c23d3d28bf0d53901a04df3718",
+        "aggregation_spec.json": "sha256:a0bea731b347744403f74659f71c45824fc4a73950183585abb55b797bb37fa4",
         "community_areas.csv": "sha256:ebd8e83bdfd6516e446b1171bb801441163b5013bc72645a786d1f6e8c867390",
         "tracts.csv": "sha256:0bf2e446efeaa660a132260c5525b2e54c91db0ffba9a66f522af8e0d2d39318",
         "wards.csv": "sha256:bedf12ea955ebf66af8f9fd1bcce6c8fcb7e974a33224464cb3b1480b305f927"
@@ -80,7 +80,7 @@
       ],
       "allocation_method": "native_source_byop",
       "confidence": "medium",
-      "notes": "License-plate readers, aggregates only: every vendor's ALPRs mapped in OpenStreetMap (2026-10-27) merged with Flock Safety's in-service plate readers from the Dec 2025 inventory behind Proton's Flock camera map (not redistributed). Wards and community areas computed directly, tracts for the χGRID (byop v1.3 layer geography). Five metrics, all weight 0. Confidence medium: OSM had mapped only 65% of Flock's in-service readers (57% south of Madison), so non-Flock readers are undercounted."
+      "notes": "License-plate readers, aggregates only: every vendor's ALPRs mapped in OpenStreetMap (2026-10-27) merged with Flock Safety's in-service plate readers from the Dec 2025 inventory behind Proton's Flock camera map (not redistributed). Wards and community areas computed directly, tracts for the χGRID (byop v1.3 layer geography). Five metrics, all weight 0 and all direction_contested (byop v1.4): privacy or safety is the reader's call. Confidence medium: OSM had mapped only 65% of Flock's in-service readers (57% south of Madison), so non-Flock readers are undercounted."
     },
     {
       "name": "parkability",
