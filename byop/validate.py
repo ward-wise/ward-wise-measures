@@ -10,12 +10,14 @@ from __future__ import annotations
 import csv
 import json
 import re
+from importlib import resources
 from pathlib import Path
 from typing import Any
 
 from .presentation import extra_categories_problems, icon_svg_problems, keywords_problems
 
-SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schema" / "aggregation_spec.schema.json"
+# Package data, so a plain `pip install` carries it; schema/ at the repo root holds the same bytes for links.
+SCHEMA_PATH = resources.files(__package__) / "schema" / "aggregation_spec.schema.json"
 
 # polygon_values geographies a consumer can supply polygons for (CONTRACT.md, "geography").
 GEOGRAPHIES = {"census_tract_2020", "zcta_2020", "chicago_ward_2023", "chicago_community_area"}
