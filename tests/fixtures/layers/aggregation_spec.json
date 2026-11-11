@@ -1,0 +1,22 @@
+{
+  "contract": "byop/v1",
+  "source": "fixture",
+  "layers": {
+    "sites": {
+      "file": "sites.geojson",
+      "kind": "points"
+    }
+  },
+  "metrics": {
+    "sites_per_sqkm": {
+      "layer": "sites",
+      "combine": "count",
+      "per": "area_km2",
+      "unit": "rate",
+      "direction": "higher",
+      "label": "Sites",
+      "description": "Sites per square kilometre.",
+      "methodology": "Two made-up points for the install check in CI."
+    }
+  }
+}

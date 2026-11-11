@@ -9,7 +9,9 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-REGISTRY_PATH = Path(__file__).resolve().parents[1] / "measures.json"
+# The checkout's own measures.json when byop runs from source; an installed byop reads ./measures.json.
+_CHECKOUT_REGISTRY = Path(__file__).resolve().parents[1] / "measures.json"
+REGISTRY_PATH = _CHECKOUT_REGISTRY if _CHECKOUT_REGISTRY.exists() else Path("measures.json")
 TARGETS = {"ward", "community_area", "chi"}
 CONFIDENCE = {"high", "medium", "low"}
 ENTRY_KEYS = {"name", "repo", "tag", "assets", "targets", "allocation_method", "confidence", "enabled", "pending_release", "notes", "layers_subdir"}

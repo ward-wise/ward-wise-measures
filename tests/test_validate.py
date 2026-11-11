@@ -240,3 +240,15 @@ def test_direction_contested_needs_a_default_direction_even_when_lenient():
     # an uncontested metric may still omit direction under --lenient
     spec["metrics"]["demo_share_pct"]["direction_contested"] = False
     assert validate_spec(spec, strict_catalog=False) == []
+
+
+def test_packaged_schema_matches_the_linked_copy():
+    # byop/schema/ ships in the wheel; schema/ at the repo root is what docs and the $id link to.
+    from byop.validate import SCHEMA_PATH
+    root_copy = Path(__file__).resolve().parents[1] / "schema" / "aggregation_spec.schema.json"
+    assert SCHEMA_PATH.read_bytes() == root_copy.read_bytes()
+
+
+def test_fixture_layers_validate():
+    report = validate_layers_dir(Path(__file__).resolve().parent / "fixtures" / "layers")
+    assert report["layers"]["sites"]["features"] == 2

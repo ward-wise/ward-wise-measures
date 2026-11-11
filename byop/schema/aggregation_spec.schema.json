@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/HarryBrisson/ward-wise-measures/schema/aggregation_spec.schema.json",
+  "title": "byop/v1 aggregation spec",
+  "type": "object",
+  "required": ["contract", "source", "layers", "metrics"],
+  "properties": {
+    "contract": {"const": "byop/v1"},
+    "source": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{1,40}$"},
+    "source_url": {"type": "string", "format": "uri"},
+    "synthetic_estimate": {"type": "boolean"},
+    "caveat": {"type": "string"},
+    "layers": {
+      "type": "object", "minProperties": 1,
+      "additionalProperties": {
+        "type": "object", "required": ["file", "kind"],
+        "properties": {
+          "file": {"type": "string", "pattern": "^[^/\\\\]+$"},
+          "kind": {"enum": ["points", "raster", "polygon_values"]},
+          "value": {"type": "string"},
+          "id_field": {"type": "string"},
+          "geography": {"enum": ["census_tract_2020", "zcta_2020", "chicago_ward_2023", "chicago_community_area"]},
+          "as_of": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object", "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_]{2,80}$"},
+      "additionalProperties": {
+        "type": "object", "required": ["layer", "combine", "unit"],
+        "if": {"properties": {"direction_contested": {"const": true}}, "required": ["direction_contested"]},
+        "then": {"required": ["direction"]},
+        "properties": {
+          "layer": {"oneOf": [{"type": "string"}, {"type": "array", "items": {"type": "string"}, "minItems": 1}]},
+          "combine": {"enum": ["count", "ratio", "share", "sum", "mean", "weighted_mean"]},
+          "unit": {"type": "string"},
+          "direction": {"enum": ["higher", "lower", "higher_better", "lower_better"]},
+          "direction_contested": {"type": "boolean"},
+          "label": {"type": "string", "maxLength": 60},
+          "description": {"type": "string", "maxLength": 300},
+          "methodology": {"type": "string", "maxLength": 1200},
+          "category": {"type": "string"},
+          "default_weight": {"type": "number", "minimum": 0, "maximum": 1},
+          "nominator": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "ward_id": {"type": "string", "pattern": "^[0-9]{1,2}$"}}},
+          "scale": {"type": "number"},
+          "per": {"enum": ["area_km2"]},
+          "flag": {"type": "string"},
+          "numerator": {"type": "string"},
+          "denominator": {"type": "string"},
+          "value": {"type": "string"},
+          "weight": {"type": "string"},
+          "ci": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2},
+          "synthetic": {"type": "boolean"},
+          "time_field": {"type": "string"},
+          "years": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+          "time_invariant": {"type": "boolean"},
+          "valid_from": {"type": "string", "pattern": "^[0-9]{4}(-[0-9]{2}-[0-9]{2})?$"},
+          "keywords": {"type": "string", "maxLength": 300, "pattern": "^[a-z0-9 .,%$&'+/-]*$"},
+          "extra_categories": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z_]{1,40}$"}, "maxItems": 4, "uniqueItems": true},
+          "icon_svg": {"type": "string", "minLength": 1, "maxLength": 2048}
+        }
+      }
+    },
+    "fixed_geography_metrics": {"type": "object", "additionalProperties": {"type": "string"}}
+  }
+}

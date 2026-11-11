@@ -25,3 +25,17 @@ jobs:
                   if actual != digest: bad.append(f"{entry['name']}/{asset}: pinned {digest} but release has {actual}")
           print("\n".join(bad) or "all pins match"); sys.exit(1 if bad else 0)
           PY
+  # Measure repos and publish-measure.yml install byop without -e; 0.4.0 crashed there because
+  # the schema sat outside the package. Install the same way and validate from outside the checkout.
+  installed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install .
+      - name: Validate a fixture with the installed byop
+        working-directory: ${{ runner.temp }}
+        run: |
+          python -c "import byop, sys; sys.exit('byop imported from the checkout' if '$GITHUB_WORKSPACE' in byop.__file__ else 0)"
+          byop validate "$GITHUB_WORKSPACE/tests/fixtures/layers"
